@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
@@ -11,7 +12,7 @@ const ProductStyles = styled.div`
   grid-auto-flow: column;
   max-width: var(--maxWidth);
   justify-content: center;
-  align-items: top;
+  align-items: flex-start;
   gap: 2rem;
   img {
     width: 100%;
@@ -19,7 +20,7 @@ const ProductStyles = styled.div`
   }
 `;
 
-const SINGLE_PRODUCT_QUERY = gql`
+export const SINGLE_PRODUCT_QUERY = gql`
   query SINGLE_PRODUCT_QUERY($id: ID!) {
     Product(where: { id: $id }) {
       name
@@ -66,6 +67,18 @@ function SingleProduct({ id }) {
       <div className="details">
         <h2>{Product.name}</h2>
         <p>{Product.description}</p>
+      </div>
+      <div className="buttonList">
+        <Link
+          href={{
+            pathname: '/update',
+            query: {
+              id,
+            },
+          }}
+        >
+          Edit ✏️
+        </Link>
       </div>
     </ProductStyles>
   );

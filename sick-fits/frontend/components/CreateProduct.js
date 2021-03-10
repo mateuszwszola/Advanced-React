@@ -1,4 +1,4 @@
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import useForm from '../lib/useForm';
@@ -32,13 +32,14 @@ const CREATE_PRODUCT_MUTATION = gql`
 `;
 
 export default function CreateProduct() {
+  const router = useRouter();
   const { inputs, handleChange, clearForm } = useForm({
     image: '',
     name: '',
     description: '',
     price: 100,
   });
-  const [createProduct, { data, loading, error }] = useMutation(
+  const [createProduct, { loading, error }] = useMutation(
     CREATE_PRODUCT_MUTATION,
     {
       variables: inputs,
@@ -51,11 +52,10 @@ export default function CreateProduct() {
       <Form
         onSubmit={async (e) => {
           e.preventDefault();
-          // Submit the inputfields to the backend:
-          await createProduct();
+          const res = await createProduct();
           clearForm();
-          Router.push({
-            pathname: `/product/${data.createProduct.id}`,
+          router.push({
+            pathname: `/product/${res.data.createProduct.id}`,
           });
         }}
       >
@@ -78,6 +78,7 @@ export default function CreateProduct() {
               type="text"
               id="name"
               name="name"
+              placeholder="Name"
               value={inputs.name}
               onChange={handleChange}
             />
@@ -96,10 +97,11 @@ export default function CreateProduct() {
 
           <label htmlFor="name">
             Description
-            <input
+            <textarea
               type="text"
               id="description"
               name="description"
+              placeholder="Description"
               value={inputs.description}
               onChange={handleChange}
             />

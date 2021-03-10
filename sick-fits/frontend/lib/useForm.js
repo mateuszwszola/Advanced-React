@@ -1,7 +1,17 @@
-import { useState } from 'react';
+import isEqual from 'lodash.isequal';
+import { useState, useEffect, useRef } from 'react';
 
 export default function useForm(initial = {}) {
   const [inputs, setInputs] = useState(initial);
+  const previousInitialDataRef = useRef(initial);
+
+  useEffect(() => {
+    if (!isEqual(previousInitialDataRef.current, initial)) {
+      setInputs(initial);
+    }
+
+    previousInitialDataRef.current = initial;
+  }, [initial]);
 
   function handleChange(e) {
     let { type, name, value } = e.target;
